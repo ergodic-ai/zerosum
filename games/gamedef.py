@@ -12,7 +12,7 @@ class Gamedef(BaseModel):
     n_players: int
     rules: str
     actions: str
-    action_format: str
+    action_format: str  # change later
     objective: str
 
     def __init__(self, **kwargs):
