@@ -4,16 +4,12 @@ from llms.clients import get_client
 import json
 
 
-class LLMInfo(BaseModel):
-    model: str
-
-
 class QueryHandler:
-    def __init__(self, action_type, system_query: str, player_info: LLMInfo):
+    def __init__(self, action_type, system_query: str, model: str):
         self.action_type = action_type
         self.system_query = system_query
-        self.player_info = player_info
-        self.query_object = get_client(player_info.model, system_query)
+        self.model = model
+        self.query_object = get_client(model, system_query)
 
     def handle_response(self, response: str):
         try:
@@ -26,7 +22,7 @@ class QueryHandler:
     def get_query_object(self) -> Callable:
         return self.query_object
 
-    def query_player(self, player_id: str, prompt: str):
+    def query_player(self, prompt: str):
         query_object = self.get_query_object()
         response = query_object(prompt)
         return self.handle_response(response)
@@ -48,10 +44,10 @@ def main():
             "reason": str,
         }
         """,
-        LLMInfo(model="gpt-4o"),
+        "gpt-4o",
     )
 
-    print(query_handler.query_player("test", "What is the best action to take?"))
+    print(query_handler.query_player("What is the best action to take?"))
 
 
 if __name__ == "__main__":
