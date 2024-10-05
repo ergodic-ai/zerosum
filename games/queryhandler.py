@@ -29,25 +29,31 @@ class QueryHandler:
 
 
 def main():
+    from llms.client_groq import SUPPORTED_MODELS
+
     class TestActionType(BaseModel):
         action: str
-        value: int
+        value: float
         reason: str
 
-    query_handler = QueryHandler(
-        TestActionType,
-        """This is a test prompt. Your objective is to return a JSON response with the action and value.
-        Give us the following structured output:
-        {
-            "action": Literal["buy", "sell"],
-            "value": float,
-            "reason": str,
-        }
-        """,
-        "gpt-4o",
-    )
-
-    print(query_handler.query_player("What is the best action to take?"))
+    for model in SUPPORTED_MODELS:
+        try:
+            query_handler = QueryHandler(
+                TestActionType,
+                """This is a test prompt. Your objective is to return a JSON response with the action and value.
+            Give us the following structured output:
+            {
+                "action": "buy" or "sell",
+                "value": float,
+                "reason": str,
+            }
+            """,
+                model,
+            )
+            print(model)
+            print(query_handler.query_player("What is the best action to take?"))
+        except Exception as e:
+            print(f"Error with model {model}: {e}")
 
 
 if __name__ == "__main__":

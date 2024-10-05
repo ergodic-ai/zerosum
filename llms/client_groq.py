@@ -30,6 +30,7 @@ def get_groq_completion(messages: list[dict[str, str]], model: str) -> str:
     chat_completion = client.chat.completions.create(
         messages=messages,
         model=model,
+        response_format={"type": "json_object"},
     )
 
     if chat_completion.choices[0].message.content is None:
