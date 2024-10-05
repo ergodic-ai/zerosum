@@ -1,9 +1,10 @@
-from typing import Callable
+from typing import Callable, Literal
 from pydantic import BaseModel
 from games.gamedef import Gamedef
 
 
-# type PlayerAction = Literal["left", "right", "up", "down"]
+# class PlayerAction( BaseModel ):
+#     move: Literal["left", "right", "up", "down"]
 
 
 class QueryHandler:
@@ -14,7 +15,7 @@ class QueryHandler:
     def handle_response(self, response: str) -> PlayerAction:
         pass
 
-    def get_query_object(self) -> Callable:
+    def get_query_object(self) -> callable:
         # return lambda x: query( x ) > str
         pass
 

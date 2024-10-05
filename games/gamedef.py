@@ -1,3 +1,4 @@
+from typing import Any
 from pydantic import BaseModel
 
 
@@ -6,13 +7,16 @@ from pydantic import BaseModel
 #     format: str
 
 
+# class BasePlayerAction..
+
+
 class Gamedef(BaseModel):
     name: str
     description: str
     n_players: int
     rules: str
     actions: str
-    action_format: str  # change later
+    action_format: Any  # change later
     objective: str
 
     def __init__(self, **kwargs):
