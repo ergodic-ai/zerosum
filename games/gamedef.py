@@ -1,14 +1,12 @@
 from typing import Any
 from pydantic import BaseModel
 
-
 # class ActionFormat(BaseModel):
 #     type: Literal["text", "json"]
 #     format: str
 
 
 # class BasePlayerAction..
-
 
 class Gamedef(BaseModel):
     name: str
