@@ -2,3 +2,6 @@ pydantic
 openai
 python-dotenv
 groq
+gym
+psycopg2
+future

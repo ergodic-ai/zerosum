@@ -14,7 +14,6 @@ class GameHistoryItem(BaseModel):
 class NegotiatorGameEnv(GameEnvironment):
     def __init__(self):
         super().__init__()
-        self.history = []
         self.current_step = 0
         self.roles = {}
         self.inv_roles = {}
@@ -120,13 +119,7 @@ class NegotiatorGameEnv(GameEnvironment):
 
         return False, None
 
-    def get_state(self, player_id: Optional[str] = None) -> str:
-        if player_id is None:
-            return self.get_state(self.inv_roles["BUYER"])
-
-        if len(self.history) == 0:
-            return f"You are the {self.roles[player_id]}. What is your next action?"
-
+    def get_history_string(self) -> str:
         history_string = ""
         for history_item in self.history:
             history_string += (
@@ -138,6 +131,28 @@ class NegotiatorGameEnv(GameEnvironment):
                 history_string += (
                     f"Narrator: {history_item.player_role} has accepted the offer.\n"
                 )
+        return history_string
+
+    def get_state(self, player_id: Optional[str] = None) -> str:
+        if player_id is None:
+            return self.get_state(self.inv_roles["BUYER"])
+
+        if len(self.history) == 0:
+            return f"You are the {self.roles[player_id]}. What is your next action?"
+
+        history_string = self.get_history_string()
+
+        # history_string = ""
+        # for history_item in self.history:
+        #     history_string += (
+        #         f"{history_item.player_role} said: {history_item.action.message}\n"
+        #     )
+        #     if history_item.action.make_offer:
+        #         history_string += f"Narrator: {history_item.player_role} has a formal offer of: {history_item.action.offer_value}.\n"
+        #     if history_item.action.accept_offer:
+        #         history_string += (
+        #             f"Narrator: {history_item.player_role} has accepted the offer.\n"
+        #         )
 
         response_string = (
             f"""Here is the history of your conversation:\n\n {history_string}\n\n"""
