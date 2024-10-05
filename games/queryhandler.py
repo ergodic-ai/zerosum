@@ -22,10 +22,19 @@ class QueryHandler:
     def get_query_object(self) -> Callable:
         return self.query_object
 
-    def query_player(self, prompt: str):
+    def query_player(self, prompt: str, max_attempts: int = 5):
         query_object = self.get_query_object()
         response = query_object(prompt)
-        return self.handle_response(response)
+        n_attempts = 0
+        while n_attempts < max_attempts:
+            try:
+                return self.handle_response(response)
+            except:
+                print("Error parsing response. Trying again")
+                print(response)
+                response += """Your previous response {response} was not a valid JSON. Please give a valid JSON response adhering to the 
+                schema definition we discussed."""
+                n_attempts += 1
 
 
 def main():

@@ -13,7 +13,9 @@ class Game(GameDefinition):
     # todo should players be a dictionary of name, handler type?
     database: Database
 
-    def __init__(self, gameEnv: GameEnvironment, players: list[str], parallel: bool = False):
+    def __init__(
+        self, gameEnv: GameEnvironment, players: list[str], parallel: bool = False
+    ):
         super().__init__(
             gameEnv=gameEnv,
             description="You are in a maze. You can move left, right, up, or down.",
@@ -22,9 +24,9 @@ class Game(GameDefinition):
             actions="You can move left, right, up, or down.",
             action_format=PlayerAction,  # change later
             players=players,
-            parallel=parallel
+            parallel=parallel,
         )
-        self.database = Database("yourdatabase","yourusername","yourpassword")
+        self.database = Database("yourdatabase", "yourusername", "yourpassword")
 
     def get_players_handlers(self) -> dict[str, QueryHandler]:
         self.gameEnv.get_role("")
@@ -37,35 +39,40 @@ class Game(GameDefinition):
     def run(self):
         table_name = ""
         game_instance = 0
-        self.create_tables(table_name)# todo insert relevant info
+        self.create_tables(table_name)  # todo insert relevant info
         self.gameEnv.make(self.players)
         self.gameEnv.reset()
         done = False
         handlers = self.get_players_handlers()
 
         while not done:
-            actions: dict[str, any] = {} # any could be passed into
+            actions: dict[str, any] = {}  # any could be passed into
             for player_id in self.players:
-                state = self.gameEnv.get_state
+                state = self.gameEnv.get_state(player_id)
                 query = self.gameEnv.build_query(state)
                 response = handlers[player_id].query_player(query)
                 actions[player_id] = response
                 if not self.parallel:
-                    observation, reward, done, info = self.gameEnv.step_individual(response)
-                    self.update_table(table_name, game_instance, observation, reward)
+                    step_response, done, score_dict = self.gameEnv.step_individual(
+                        response
+                    )
+                    self.update_table(table_name, game_instance, state, score_dict)
             if self.parallel:
-                observation, reward, done, info = self.gameEnv.step_all(actions)
-                self.update_table(table_name, game_instance, observation, reward)
+                step_response, done, score_dict = self.gameEnv.step_all(actions)
+                self.update_table(table_name, game_instance, state, score_dict)
 
     def score(self) -> dict[str, int]:
         pass
 
-    def create_tables(self, tableName:str):
-        query = '''CREATE TABLE {} (state VARCHAR(100),timestamp VARCHAR(100)  PRIMARY KEY, gameInstance INTEGER, score VARCHAR(100) );'''.format(tableName)
+    def create_tables(self, tableName: str):
+        query = """CREATE TABLE {} (state VARCHAR(100),timestamp VARCHAR(100)  PRIMARY KEY, gameInstance INTEGER, score VARCHAR(100) );""".format(
+            tableName
+        )
         self.database.execute_command(query)
 
-    def update_table(self, tableName:str, gameInstance: int, state:str, score: str):
-        curTime = datetime.now().strftime('%H:%M:%S')
-        query = '''INSERT INTO {} (state, timestamp, gameInstance, score) VALUES ({}, {},{},{});'''.format(tableName, state, "\'"+curTime+"\'", gameInstance, score)
+    def update_table(self, tableName: str, gameInstance: int, state: str, score: str):
+        curTime = datetime.now().strftime("%H:%M:%S")
+        query = """INSERT INTO {} (state, timestamp, gameInstance, score) VALUES ({}, {},{},{});""".format(
+            tableName, state, "'" + curTime + "'", gameInstance, score
+        )
         self.database.execute_command(query)
-

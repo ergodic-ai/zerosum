@@ -5,10 +5,10 @@ from games.structs.StepReponse import StepResponse
 class GameEnvironment:
 
     def __init__(self):
-        state: any
+        self.state: any
         # todo extend as required
 
-    def make(self):
+    def make(self, players: list[str]):
         pass
 
     def reset(self):
