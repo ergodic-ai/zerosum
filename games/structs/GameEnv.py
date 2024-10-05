@@ -2,11 +2,11 @@ from games.structs.GameState import GameState
 from games.structs.StepReponse import StepResponse
 
 
-class GameEnvironment():
+class GameEnvironment:
 
     def __init__(self):
-        # state stored here
-        pass
+        state: any
+        # todo extend as required
 
     def make(self):
         pass
@@ -14,17 +14,20 @@ class GameEnvironment():
     def reset(self):
         pass
 
-    def stepIndividual(self) -> StepResponse:
+    def get_role(self, player_id: str) -> str:
         pass
 
-    def stepAll(self) -> StepResponse:
+    def step_individual(self, action: any) -> StepResponse:
+        pass
+
+    def step_all(self, actions: dict[str, any]) -> StepResponse:
         pass
 
     def get_state(self) -> GameState:
         pass
 
-    def get_system_prompt(self) -> str:
+    def get_system_prompt(self, player_id: str) -> str:
         pass
 
-    def build_query(self) -> str:
+    def build_query(self, state: any) -> str:
         pass
